@@ -37,7 +37,7 @@ RUN if [[ -z "$TIMESCALEDB_VERSION" ]] ; \
     apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_FROM_VERSION}=${TIMESCALEDB_VERSION}'*' timescaledb-2-loader-postgresql-${PG_FROM_VERSION}=${TIMESCALEDB_VERSION}'*' && \
     apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_TO_VERSION}=${TIMESCALEDB_VERSION}'*' timescaledb-2-loader-postgresql-${PG_TO_VERSION}=${TIMESCALEDB_VERSION}'*' && \
     rm -rf /var/lib/apt/lists/* && \
-    echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/${PG_TO_VERSION}/data/postgresql.conf && \
+    echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/${PG_TO_VERSION}/data/postgresql.conf \
     ; fi
 
 # PostGIS
