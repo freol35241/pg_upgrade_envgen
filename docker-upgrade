@@ -19,4 +19,8 @@ if [ "$1" = 'pg_upgrade' ]; then
 	fi
 fi
 
-exec "$@"
+eval "$@"
+
+if [ -f "loadable_libraries.txt" ]; then
+	cat loadable_libraries.txt
+fi
