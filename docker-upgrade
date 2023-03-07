@@ -19,7 +19,7 @@ if [ "$1" = 'pg_upgrade' ]; then
 	fi
 fi
 
-eval "$@"
+eval "$@" || :
 
 ls -la .
 
