@@ -21,8 +21,6 @@ fi
 
 eval "$@" || :
 
-ls -la .
-
 if [ -f "loadable_libraries.txt" ]; then
 	cat loadable_libraries.txt
 fi
