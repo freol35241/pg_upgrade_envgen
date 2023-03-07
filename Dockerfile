@@ -36,7 +36,8 @@ RUN if [[ -z "$TIMESCALEDB_VERSION" ]] ; \
     apt-get update && \
     apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_FROM_VERSION}=${TIMESCALEDB_VERSION}'*' timescaledb-2-loader-postgresql-${PG_FROM_VERSION}=${TIMESCALEDB_VERSION}'*' && \
     apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_TO_VERSION}=${TIMESCALEDB_VERSION}'*' timescaledb-2-loader-postgresql-${PG_TO_VERSION}=${TIMESCALEDB_VERSION}'*' && \
-    rm -rf /var/lib/apt/lists/* \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/${PG_TO_VERSION}/data/postgresql.conf && \
     ; fi
 
 # PostGIS
@@ -47,7 +48,7 @@ RUN if [[ -z "$POSTGIS_VERSION" ]] ; \
     echo Extension PostGIS will not be installed \
     ; \
     else \
-    echo Installing PostGIS==${POSTGIS_VERSION}} ... && \
+    echo Installing PostGIS==${POSTGIS_VERSION} ... && \
     apt-get update && \
     wget --no-check-certificate --quiet -O - https://salsa.debian.org/postgresql/postgresql-common/raw/master/pgdg/apt.postgresql.org.sh | bash && \
     apt-get update && \
