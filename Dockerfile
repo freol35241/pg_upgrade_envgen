@@ -22,18 +22,6 @@ ENV PGDATANEW /var/lib/postgresql/${PG_TO_VERSION}/data
 RUN mkdir -p "$PGDATAOLD" "$PGDATANEW" \
     && chown -R postgres:postgres /var/lib/postgresql
 
-WORKDIR /var/lib/postgresql
-
-COPY docker-upgrade /usr/local/bin/
-
-ENTRYPOINT ["docker-upgrade"]
-
-# recommended: --link
-CMD ["pg_upgrade"]
-
-
-
-
 # TimescaleDB
 
 ARG TIMESCALEDB_VERSION
@@ -67,3 +55,13 @@ RUN if [[ -z "$POSTGIS_VERSION" ]] ; \
     apt-get install -y --no-install-recommends postgis postgresql-${PG_FROM_VERSION}-postgis-${POSTGIS_VERSION} && \
     rm -rf /var/lib/apt/lists/* \
     ; fi
+
+
+WORKDIR /var/lib/postgresql
+
+COPY --chmod=777 docker-upgrade /usr/local/bin/
+
+ENTRYPOINT ["/usr/local/bin/docker-upgrade"]
+
+# recommended: --link
+CMD ["pg_upgrade"]
