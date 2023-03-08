@@ -1,7 +1,7 @@
 ARG PG_TO_VERSION
-ARG DEB_VERSION=bullseye
+ARG DEBIAN_VERSION=bullseye
 
-FROM postgres:${PG_TO_VERSION}-${DEB_VERSION} as base
+FROM postgres:${PG_TO_VERSION}-${DEBIAN_VERSION} as base
 
 ARG PG_TO_VERSION
 ARG PG_FROM_VERSION
@@ -25,29 +25,22 @@ RUN mkdir -p "$PGDATAOLD" "$PGDATANEW" \
 # TimescaleDB
 
 ARG TIMESCALEDB_VERSION
-RUN if [[ -z "$TIMESCALEDB_VERSION" ]] ; \
+RUN if [[ -n "$TIMESCALEDB_VERSION" ]] ; \
     then \
-    echo Extension TimescaleDB will not be installed \
-    ; \
-    else \
     echo Installing TimescaleDB==${TIMESCALEDB_VERSION} ... && \
     apt-get update && \
     wget --no-check-certificate --quiet -O - https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash && \
     apt-get update && \
     apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_FROM_VERSION}=${TIMESCALEDB_VERSION}'*' timescaledb-2-loader-postgresql-${PG_FROM_VERSION}=${TIMESCALEDB_VERSION}'*' && \
     apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_TO_VERSION}=${TIMESCALEDB_VERSION}'*' timescaledb-2-loader-postgresql-${PG_TO_VERSION}=${TIMESCALEDB_VERSION}'*' && \
-    rm -rf /var/lib/apt/lists/* && \
-    echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/${PG_TO_VERSION}/data/postgresql.conf \
+    rm -rf /var/lib/apt/lists/* \
     ; fi
 
 # PostGIS
 
 ARG POSTGIS_VERSION
-RUN if [[ -z "$POSTGIS_VERSION" ]] ; \
+RUN if [[ -n "$POSTGIS_VERSION" ]] ; \
     then \
-    echo Extension PostGIS will not be installed \
-    ; \
-    else \
     echo Installing PostGIS==${POSTGIS_VERSION} ... && \
     apt-get update && \
     wget --no-check-certificate --quiet -O - https://salsa.debian.org/postgresql/postgresql-common/raw/master/pgdg/apt.postgresql.org.sh | bash && \
@@ -60,7 +53,7 @@ RUN if [[ -z "$POSTGIS_VERSION" ]] ; \
 
 WORKDIR /var/lib/postgresql
 
-COPY --chmod=777 docker-upgrade /usr/local/bin/
+COPY --chmod=775 docker-upgrade /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/docker-upgrade"]
 

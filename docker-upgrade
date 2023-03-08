@@ -1,26 +1,28 @@
 #!/bin/bash
 set -e
 
-if [ "$#" -eq 0 -o "${1:0:1}" = '-' ]; then
-	set -- pg_upgrade "$@"
+if [ "$#" -eq 0 ] || [ "${1:0:1}" = '-' ]; then
+        set -- pg_upgrade "$@"
 fi
 
-if [ "$1" = 'pg_upgrade' -a "$(id -u)" = '0' ]; then
-	mkdir -p "$PGDATAOLD" "$PGDATANEW"
-	chmod 700 "$PGDATAOLD" "$PGDATANEW"
-	chown postgres .
-	chown -R postgres "$PGDATAOLD" "$PGDATANEW"
-	exec gosu postgres "$BASH_SOURCE" "$@"
+if [ "$1" = 'pg_upgrade' ] && [ "$(id -u)" = '0' ]; then
+        mkdir -p "$PGDATAOLD" "$PGDATANEW"
+        chmod 700 "$PGDATAOLD" "$PGDATANEW"
+        chown postgres .
+        chown -R postgres "$PGDATAOLD" "$PGDATANEW"
+        exec gosu postgres "$BASH_SOURCE" "$@"
 fi
 
 if [ "$1" = 'pg_upgrade' ]; then
-	if [ ! -s "$PGDATANEW/PG_VERSION" ]; then
-		PGDATA="$PGDATANEW" eval "initdb $POSTGRES_INITDB_ARGS"
-	fi
+        if [ ! -s "$PGDATANEW/PG_VERSION" ]; then
+                PGDATA="$PGDATANEW" eval "initdb $POSTGRES_INITDB_ARGS"
+        fi
 fi
 
-eval "$@" || :
+echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/13/data/postgresql.conf
+
+eval "pg_upgrade $@" || :
 
 if [ -f "loadable_libraries.txt" ]; then
-	cat loadable_libraries.txt
+        cat loadable_libraries.txt
 fi
