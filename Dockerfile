@@ -25,6 +25,7 @@ RUN mkdir -p "$PGDATAOLD" "$PGDATANEW" \
 # TimescaleDB
 
 ARG TIMESCALEDB_VERSION
+ENV TIMESCALEDB_VERSION = ${TIMESCALEDB_VERSION}
 RUN if [[ -n "$TIMESCALEDB_VERSION" ]] ; \
     then \
     echo Installing TimescaleDB==${TIMESCALEDB_VERSION} ... && \
@@ -39,6 +40,7 @@ RUN if [[ -n "$TIMESCALEDB_VERSION" ]] ; \
 # PostGIS
 
 ARG POSTGIS_VERSION
+ENV POSTGIS_VERSION=${POSTGIS_VERSION}
 RUN if [[ -n "$POSTGIS_VERSION" ]] ; \
     then \
     echo Installing PostGIS==${POSTGIS_VERSION} ... && \
@@ -57,5 +59,5 @@ COPY --chmod=775 docker-upgrade /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/docker-upgrade"]
 
-# recommended: --link
+# Default to pg_upgrade
 CMD ["pg_upgrade"]
