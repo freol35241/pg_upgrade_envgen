@@ -28,7 +28,7 @@ if [ ! -s "$PGDATANEW/PG_VERSION" ]; then
 fi
 
 if [ -n "${TIMESCALEDB_VERSION}" ]; then
-        echo "shared_preload_libraries = 'timescaledb'" >> "${PGDATANEW}/postgresql.conf"
+        timescaledb-tune --quiet --yes
 fi
 
 # Run and handle potential failure
