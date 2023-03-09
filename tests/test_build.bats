@@ -1,5 +1,8 @@
 #!/usr/bin/env bats
 
+load "../bats-helpers/bats-support/load"
+load "../bats-helpers/bats-assert/load"
+
 setup() {
     DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )"/.. >/dev/null 2>&1 && pwd )"
 }
@@ -23,7 +26,7 @@ teardown() {
         $DIR
 
     echo $output
-    [ "$status" -eq 0 ]
+    assert_equal "$status" 0
 }
 
 @test "11-to-15-bullseye" {
@@ -35,7 +38,7 @@ teardown() {
         $DIR
 
     echo $output
-    [ "$status" -eq 0 ]
+    assert_equal "$status" 0
 }
 
 @test "11-to-13-buster-tsdb2.3.0" {
@@ -48,7 +51,7 @@ teardown() {
         $DIR
 
     echo $output
-    [ "$status" -eq 0 ]
+    assert_equal "$status" 0
 }
 
 @test "12-to-15-bullseye-tsdb2.10" {
@@ -61,7 +64,8 @@ teardown() {
         $DIR
 
     echo $output
-    [ "$status" -eq 0 ]
+    assert_equal "$status" 0
+
 }
 
 
