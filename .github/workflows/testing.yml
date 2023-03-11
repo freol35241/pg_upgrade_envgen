@@ -1,4 +1,4 @@
-name: 'CI tests'
+name: 'Testing'
 on:
   pull_request:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  bats:
     runs-on: ubuntu-latest
     steps:
 
