@@ -28,7 +28,7 @@ if [ ! -s "$PGDATANEW/PG_VERSION" ]; then
 fi
 
 if [ -n "${TIMESCALEDB_VERSION}" ]; then
-        timescaledb-tune --quiet --yes
+        timescaledb-tune --quiet --yes --conf-path="${PGDATANEW}/postgresql.conf"
 fi
 
 # Run and handle potential failure
