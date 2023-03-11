@@ -14,7 +14,7 @@ teardown() {
 
 @test "no input" {
     bats_require_minimum_version 1.5.0
-    run ! docker build $REPO_ROOT
+    run ! docker build "$REPO_ROOT"
 }
 
 @test "11-to-13-bullseye" {
@@ -23,9 +23,9 @@ teardown() {
         --build-arg DEBIAN_VERSION=bullseye \
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=13 \
-        $REPO_ROOT
+        "$REPO_ROOT"
 
-    echo $output
+    echo "$output"
     assert_equal "$status" 0
 }
 
@@ -35,9 +35,9 @@ teardown() {
         --build-arg DEBIAN_VERSION=bullseye \
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=15 \
-        $REPO_ROOT
+        "$REPO_ROOT"
 
-    echo $output
+    echo "$output"
     assert_equal "$status" 0
 }
 
@@ -48,9 +48,9 @@ teardown() {
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=13 \
         --build-arg TIMESCALEDB_VERSION=2.3.0 \
-        $REPO_ROOT
+        "$REPO_ROOT"
 
-    echo $output
+    echo "$output"
     assert_equal "$status" 0
 }
 
@@ -61,9 +61,9 @@ teardown() {
         --build-arg PG_FROM_VERSION=12 \
         --build-arg PG_TO_VERSION=15 \
         --build-arg TIMESCALEDB_VERSION=2.10 \
-        $REPO_ROOT
+        "$REPO_ROOT"
 
-    echo $output
+    echo "$output"
     assert_equal "$status" 0
 
 }
