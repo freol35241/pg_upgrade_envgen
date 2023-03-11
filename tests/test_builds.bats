@@ -4,17 +4,17 @@ load "../bats-helpers/bats-support/load"
 load "../bats-helpers/bats-assert/load"
 
 setup() {
-    DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )"/.. >/dev/null 2>&1 && pwd )"
+    REPO_ROOT="$( cd "$( dirname "$BATS_TEST_FILENAME" )"/.. >/dev/null 2>&1 && pwd )"
 }
 
 teardown() {
-    docker image prune --force
+    (docker image ls -aq | xargs docker rmi) || :
 }
 
 
 @test "no input" {
     bats_require_minimum_version 1.5.0
-    run ! docker build $DIR
+    run ! docker build $REPO_ROOT
 }
 
 @test "11-to-13-bullseye" {
@@ -23,7 +23,7 @@ teardown() {
         --build-arg DEBIAN_VERSION=bullseye \
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=13 \
-        $DIR
+        $REPO_ROOT
 
     echo $output
     assert_equal "$status" 0
@@ -35,7 +35,7 @@ teardown() {
         --build-arg DEBIAN_VERSION=bullseye \
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=15 \
-        $DIR
+        $REPO_ROOT
 
     echo $output
     assert_equal "$status" 0
@@ -48,7 +48,7 @@ teardown() {
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=13 \
         --build-arg TIMESCALEDB_VERSION=2.3.0 \
-        $DIR
+        $REPO_ROOT
 
     echo $output
     assert_equal "$status" 0
@@ -61,7 +61,7 @@ teardown() {
         --build-arg PG_FROM_VERSION=12 \
         --build-arg PG_TO_VERSION=15 \
         --build-arg TIMESCALEDB_VERSION=2.10 \
-        $DIR
+        $REPO_ROOT
 
     echo $output
     assert_equal "$status" 0

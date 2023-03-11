@@ -55,7 +55,7 @@ RUN if [ ! -z "$POSTGIS_VERSION" ] ; \
 
 WORKDIR /var/lib/postgresql
 
-COPY --chmod=775 docker-upgrade /usr/local/bin/
+COPY --chmod=555 docker-upgrade /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/docker-upgrade"]
 
