@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -e
 
 # Emulate pg_upgrade being the ENTRYPOINT
 if [ "$#" -eq 0 ] || [ "${1:0:1}" = '-' ]; then
