@@ -22,7 +22,7 @@ teardown() {
 @test "pg11-to-pg13-NO-pg_upgrade" {
 
     # Start a container running the old postgres instance
-    docker run -dit \
+    docker run -d \
         --name pg_old \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
         -v "$OLD":/var/lib/postgresql/data \
@@ -34,7 +34,7 @@ teardown() {
     sleep 5
 
     # Input som data
-    docker exec -it \
+    docker exec \
         -u postgres \
 	    pg_old \
 	    pgbench -i -s 10
@@ -44,7 +44,7 @@ teardown() {
     docker stop pg_old && docker rm pg_old
 
     # Start a container running the new postgres instance but try to mount the OLD directory
-    docker run -dit \
+    docker run -d \
         --name pg_new \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
         -v "$OLD":/var/lib/postgresql/data \
@@ -65,7 +65,7 @@ teardown() {
 @test "pg11-to-pg13" {
 
     # Start a container running the old postgres instance
-    docker run -dit \
+    docker run -d \
         --name pg_old \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
         -v "$OLD":/var/lib/postgresql/data \
@@ -77,7 +77,7 @@ teardown() {
     sleep 5
 
     # Input som data
-    docker exec -it \
+    docker exec \
         -u postgres \
 	    pg_old \
 	    pgbench -i -s 10
@@ -113,7 +113,7 @@ teardown() {
     echo 'pg_upgrade ran successfully! Starting container with new postgres instance!'
 
     # Start a container running the new postgres instance
-    docker run -dit \
+    docker run -d \
         --name pg_new \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
         -v "$NEW":/var/lib/postgresql/data \
