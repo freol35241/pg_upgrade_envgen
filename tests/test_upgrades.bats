@@ -9,8 +9,8 @@ setup() {
     TMP_DIR="$(temp_make)"
     OLD="${TMP_DIR}/old/data"
     NEW="${TMP_DIR}/new/data"
-    mkdir -p $OLD
-    mkdir -p $NEW
+    mkdir -p "$OLD"
+    mkdir -p "$NEW"
 }
 
 teardown() {
@@ -22,10 +22,10 @@ teardown() {
 @test "pg11-to-pg13-NO-pg_upgrade" {
 
     # Start a container running the old postgres instance
-    docker run -dit \
+    docker run -d \
         --name pg_old \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
-        -v "$PWD/$OLD/data":/var/lib/postgresql/data \
+        -v "$OLD":/var/lib/postgresql/data \
         "postgres:11"
 
     echo 'Container with old postgres instance started!'
@@ -34,7 +34,7 @@ teardown() {
     sleep 5
 
     # Input som data
-    docker exec -it \
+    docker exec \
         -u postgres \
 	    pg_old \
 	    pgbench -i -s 10
@@ -44,10 +44,10 @@ teardown() {
     docker stop pg_old && docker rm pg_old
 
     # Start a container running the new postgres instance but try to mount the OLD directory
-    docker run -dit \
+    docker run -d \
         --name pg_new \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
-        -v "$PWD/$OLD/data":/var/lib/postgresql/data \
+        -v "$OLD":/var/lib/postgresql/data \
         "postgres:13"
 
     # Give it some slack time to start approprietly
@@ -56,7 +56,7 @@ teardown() {
     echo 'Started! Check that it fails...'
 
     run docker logs pg_new
-    echo $output
+    echo "$output"
 
     assert_equal "$( docker container inspect -f '{{.State.Status}}' pg_new )" "exited"
 
@@ -65,10 +65,10 @@ teardown() {
 @test "pg11-to-pg13" {
 
     # Start a container running the old postgres instance
-    docker run -dit \
+    docker run -d \
         --name pg_old \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
-        -v "$PWD/$OLD/data":/var/lib/postgresql/data \
+        -v "$OLD":/var/lib/postgresql/data \
         "postgres:11"
 
     echo 'Container with old postgres instance started!'
@@ -77,7 +77,7 @@ teardown() {
     sleep 5
 
     # Input som data
-    docker exec -it \
+    docker exec \
         -u postgres \
 	    pg_old \
 	    pgbench -i -s 10
@@ -94,9 +94,9 @@ teardown() {
         --build-arg DEBIAN_VERSION=bullseye \
         --build-arg PG_FROM_VERSION=11 \
         --build-arg PG_TO_VERSION=13 \
-        $REPO_ROOT
+        "$REPO_ROOT"
 
-    echo $output
+    echo "$output"
     assert_equal "$status" 0
 
     echo 'pg_upgrade_envgen has been run successfully!'
@@ -107,16 +107,16 @@ teardown() {
 	    -v "$NEW":/var/lib/postgresql/13/data \
 	    pg_upgrade_env
 
-    echo $output
+    echo "$output"
     assert_equal "$status" 0
 
     echo 'pg_upgrade ran successfully! Starting container with new postgres instance!'
 
     # Start a container running the new postgres instance
-    docker run -dit \
+    docker run -d \
         --name pg_new \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
-        -v "$PWD/$NEW/data":/var/lib/postgresql/data \
+        -v "$NEW":/var/lib/postgresql/data \
         "postgres:13"
 
     # Give it some slack time to start approprietly
@@ -126,7 +126,7 @@ teardown() {
 
     run docker logs pg_new
 
-    echo $output
+    echo "$output"
     assert_equal "$( docker container inspect -f '{{.State.Status}}' pg_new )" "running"
 
 }

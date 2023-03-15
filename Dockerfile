@@ -55,9 +55,9 @@ RUN if [ ! -z "$POSTGIS_VERSION" ] ; \
 
 WORKDIR /var/lib/postgresql
 
-COPY --chmod=555 docker-upgrade /usr/local/bin/
+COPY --chmod=555 docker-entrypoint.sh /usr/local/bin/
 
-ENTRYPOINT ["/usr/local/bin/docker-upgrade"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 # Default to pg_upgrade
 CMD ["pg_upgrade"]
