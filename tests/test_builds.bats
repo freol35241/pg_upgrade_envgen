@@ -17,55 +17,23 @@ teardown() {
     run ! docker build "$REPO_ROOT"
 }
 
-@test "11-to-13-bullseye" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache \
-        --build-arg DEBIAN_VERSION=bullseye \
-        --build-arg PG_FROM_VERSION=11 \
-        --build-arg PG_TO_VERSION=13 \
-        "$REPO_ROOT"
+@test "parametric test builds" {
 
-    echo "$output"
-    assert_equal "$status" 0
-}
+    COMBINATIONS=(
+        "bullseye 11 13"
+        "buster 11 13"
+    )
 
-@test "11-to-15-bullseye" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache \
-        --build-arg DEBIAN_VERSION=bullseye \
-        --build-arg PG_FROM_VERSION=11 \
-        --build-arg PG_TO_VERSION=15 \
-        "$REPO_ROOT"
+    final_status=0
 
-    echo "$output"
-    assert_equal "$status" 0
-}
+    for element in "${COMBINATIONS[@]}"; do
+        read -a combo <<< "$element"  # uses default whitespace IFS
+        DEBIAN_VERSION=${combo[0]} PG_FROM_VERSION=${combo[1]} PG_TO_VERSION=${combo[2]} TIMESCALEDB_VERSION=${combo[3]} POSTGIS_VERSION=${combo[4]} bats -t tests/parametric_tests/test_build.bats
+        echo "# ${output}" >&3
+        echo "#" >&3
+        final_status=$((final_status + status))
+    done
 
-@test "11-to-13-buster-tsdb2.3.0" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache \
-        --build-arg DEBIAN_VERSION=buster \
-        --build-arg PG_FROM_VERSION=11 \
-        --build-arg PG_TO_VERSION=13 \
-        --build-arg TIMESCALEDB_VERSION=2.3.0 \
-        "$REPO_ROOT"
-
-    echo "$output"
-    assert_equal "$status" 0
-}
-
-@test "12-to-15-bullseye-tsdb2.10" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache --progress=plain \
-        --build-arg DEBIAN_VERSION=bullseye \
-        --build-arg PG_FROM_VERSION=12 \
-        --build-arg PG_TO_VERSION=15 \
-        --build-arg TIMESCALEDB_VERSION=2.10 \
-        "$REPO_ROOT"
-
-    echo "$output"
-    assert_equal "$status" 0
+    assert_equal "$final_status" 0
 
 }
-
-
