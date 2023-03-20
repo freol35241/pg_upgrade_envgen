@@ -20,8 +20,21 @@ teardown() {
 @test "parametric test builds" {
 
     COMBINATIONS=(
+        "bullseye 10 11"
+        "bullseye 10 12"
+        "bullseye 10 13"
+        "bullseye 10 14"
+        "bullseye 10 15"
+        "bullseye 11 12"
         "bullseye 11 13"
-        "buster 11 13"
+        "bullseye 11 14"
+        "bullseye 11 15"
+        "bullseye 12 13"
+        "bullseye 12 14"
+        "bullseye 12 15"
+        "bullseye 13 14"
+        "bullseye 13 15"
+        "bullseye 14 15"
     )
 
     final_status=0
