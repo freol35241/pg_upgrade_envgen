@@ -17,55 +17,45 @@ teardown() {
     run ! docker build "$REPO_ROOT"
 }
 
-@test "11-to-13-bullseye" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache \
-        --build-arg DEBIAN_VERSION=bullseye \
-        --build-arg PG_FROM_VERSION=11 \
-        --build-arg PG_TO_VERSION=13 \
-        "$REPO_ROOT"
+@test "parametric test builds" {
 
-    echo "$output"
-    assert_equal "$status" 0
-}
+    COMBINATIONS=(
+        "bullseye 10 11"
+        "bullseye 10 12"
+        "bullseye 10 13"
+        "bullseye 10 14"
+        "bullseye 10 15"
+        "bullseye 11 12"
+        "bullseye 11 13"
+        "bullseye 11 14"
+        "bullseye 11 15"
+        "bullseye 12 13"
+        "bullseye 12 14"
+        "bullseye 12 15"
+        "bullseye 13 14"
+        "bullseye 13 15"
+        "bullseye 14 15"
+        "buster 11 13 2.3.0"
+        "buster 11 13 2.3.0 2.5"
+        "bullseye 13 15 2.10"
+        "bullseye 13 15 2.10 3"
+    )
 
-@test "11-to-15-bullseye" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache \
-        --build-arg DEBIAN_VERSION=bullseye \
-        --build-arg PG_FROM_VERSION=11 \
-        --build-arg PG_TO_VERSION=15 \
-        "$REPO_ROOT"
+    final_status=0
 
-    echo "$output"
-    assert_equal "$status" 0
-}
+    for element in "${COMBINATIONS[@]}"; do
+        # shellcheck disable=SC2162
+        read -a combo <<< "$element"  # uses default whitespace IFS
+        DEBIAN_VERSION=${combo[0]} PG_FROM_VERSION=${combo[1]} PG_TO_VERSION=${combo[2]} TIMESCALEDB_VERSION=${combo[3]} POSTGIS_VERSION=${combo[4]} run bats -t tests/parametric_tests/test_build.bats
 
-@test "11-to-13-buster-tsdb2.3.0" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache \
-        --build-arg DEBIAN_VERSION=buster \
-        --build-arg PG_FROM_VERSION=11 \
-        --build-arg PG_TO_VERSION=13 \
-        --build-arg TIMESCALEDB_VERSION=2.3.0 \
-        "$REPO_ROOT"
+        for line in "${lines[@]:1}"; do
+            echo "# ${line}" >&3
+        done
+        echo "#" >&3
 
-    echo "$output"
-    assert_equal "$status" 0
-}
+        final_status=$(("$final_status" + "$status"))
+    done
 
-@test "12-to-15-bullseye-tsdb2.10" {
-    bats_require_minimum_version 1.5.0
-    run docker build --no-cache --progress=plain \
-        --build-arg DEBIAN_VERSION=bullseye \
-        --build-arg PG_FROM_VERSION=12 \
-        --build-arg PG_TO_VERSION=15 \
-        --build-arg TIMESCALEDB_VERSION=2.10 \
-        "$REPO_ROOT"
-
-    echo "$output"
-    assert_equal "$status" 0
+    assert_equal "$final_status" 0
 
 }
-
-
