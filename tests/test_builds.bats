@@ -30,8 +30,12 @@ teardown() {
         # shellcheck disable=SC2162
         read -a combo <<< "$element"  # uses default whitespace IFS
         DEBIAN_VERSION=${combo[0]} PG_FROM_VERSION=${combo[1]} PG_TO_VERSION=${combo[2]} TIMESCALEDB_VERSION=${combo[3]} POSTGIS_VERSION=${combo[4]} run bats -t tests/parametric_tests/test_build.bats
-        echo "# ${output}" >&3
+
+        for line in "${lines[@]}"; do
+            echo "# ${line}" >&3
+        done
         echo "#" >&3
+
         final_status=$(("$final_status" + "$status"))
     done
 
