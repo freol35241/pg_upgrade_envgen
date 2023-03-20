@@ -35,6 +35,10 @@ teardown() {
         "bullseye 13 14"
         "bullseye 13 15"
         "bullseye 14 15"
+        "buster 11 13 2.3.0"
+        "buster 11 13 2.3.0 2.5"
+        "bullseye 13 15 2.10"
+        "bullseye 13 15 2.10 3"
     )
 
     final_status=0
@@ -44,7 +48,7 @@ teardown() {
         read -a combo <<< "$element"  # uses default whitespace IFS
         DEBIAN_VERSION=${combo[0]} PG_FROM_VERSION=${combo[1]} PG_TO_VERSION=${combo[2]} TIMESCALEDB_VERSION=${combo[3]} POSTGIS_VERSION=${combo[4]} run bats -t tests/parametric_tests/test_build.bats
 
-        for line in "${lines[@]}"; do
+        for line in "${lines[@]:1}"; do
             echo "# ${line}" >&3
         done
         echo "#" >&3
