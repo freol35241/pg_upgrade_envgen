@@ -1,4 +1,7 @@
 # pg_upgrade_envgen
+
+**NOTE: I can in no way be held liable for any resulting data loss that may happen due to usage of this project. Please back up your data prior to performing an upgrade!**
+
 Environment generator for containerized use of pg_upgrade.
 
 Much inspiration has been drawn from https://github.com/tianon/docker-postgres-upgrade
